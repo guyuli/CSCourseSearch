@@ -8,7 +8,7 @@
 "use strict";
 
 // Get your own API key from https://uwaterloo.ca/api/register
-var apiKey = ""; // input your uwaterloo key
+var apiKey = "f7f734f0ab7bf935da6074c9786eae64"; // input your uwaterloo key
 var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
 
 (function(exports) {
