@@ -16,6 +16,13 @@
 	color: #FFFFFF;
 }
 
+#developer{
+	font-size: 15px;
+	color: #FFFFFF;
+	text-align: right;
+	margin-right: 25px;
+}
+
 #career_combo{
 	background-color: #FFFFFF;
 	color: #000000;
