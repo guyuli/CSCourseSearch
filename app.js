@@ -8,7 +8,7 @@
 "use strict";
 
 // Get your own API key from https://uwaterloo.ca/api/register
-var apiKey = "f7f734f0ab7bf935da6074c9786eae64"; // input your uwaterloo key
+var apiKey = "f7f734f0ab7bf935da6074c9786eae64"; // input your uwaterloo api key
 var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
 
 (function(exports) {
@@ -17,8 +17,8 @@ var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
     class AppModel {
 		constructor() {
 			this._observers = [];
-            this.course_data;
-		}
+            this.course_data = [];
+        }
 
         // You can add attributes / functions here to store the data
 
@@ -33,13 +33,22 @@ var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
                     // of AppModel inside this function.
                     that.course_data = data.data;
                 }
-            );
+            ).always(function() { // is returned as deffered object
+                showComboOptions(that); // show combo options after data is loaded
+            });
+        }
+
+        getCourseData() {
+            var that = this;
+            console.log(that.course_data);
+            // return this.course_data;
         }
 		
         filterData() {
             var that = this;
+            var course_combo = document.getElementById("course_combo");
             var career_combo = document.getElementById("career_combo");
-            var course_num = document.getElementById("course_num").value;
+            var course_num = course_combo.options[course_combo.selectedIndex].value;
             var course_career = career_combo.options[career_combo.selectedIndex].value;
             var course_career_data;
             var course_num_data;
@@ -47,7 +56,7 @@ var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
             //console.log(course_num);
             //console.log(course_career);
 
-            if (course_num === '') {
+            if (course_num === 'Any') {
                 if (course_career === 'Any') {
                     //console.log("haha");
                     that.notify(this.course_data);
@@ -249,22 +258,31 @@ var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
         };        
     }
 
-    function showComboOptions() {
-        var combo = document.getElementById("career_combo");
+    function showComboOptions(model) {
+        var careerCombo = document.getElementById("career_combo");
         var careers = new Array('Any','Undergraduate','Graduate');
         for (var i = 0; i < careers.length; i++){
             var option = document.createElement("option");
             option.text = careers[i];
             option.value = careers[i];
-            combo.add(option, null); //Standard 
+            careerCombo.add(option, null);
+        }
+        var courseCombo = document.getElementById("course_combo");
+        var courses = new Array('Any');
+        for(var i = 0; i < model.course_data.length; i++){
+            courses.push(model.course_data[i].catalog_number);
+        }
+        for (var i = 0; i < courses.length; i++){
+            var option = document.createElement("option");
+            option.text = courses[i];
+            option.value = courses[i];
+            courseCombo.add(option, null);
         }
     }
 
     function addSearchButtonListener(model) {
         var button = document.getElementById("search_button");
         button.onclick = function(){
-            //console.log("haha");
-            //console.log(model.course_data);
             model.filterData();
         };
     }
@@ -274,7 +292,6 @@ var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
 		Complete it with any additional initialization.
 	*/
     exports.startApp = function() {
-        showComboOptions();
         var model = new AppModel();
         var view = new AppView(model, "div#viewContent");
         model.loadData(endpointUrl);
