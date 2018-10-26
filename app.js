@@ -1,14 +1,7 @@
-/*
- *  Starter code for University of Waterloo CS349 - Spring 2017 - A3.
- *	Refer to the JS examples shown in lecture for further reference.
- *  Note: this code uses ECMAScript 6.
- *  Updated 2017-07-12.
- */
-	
 "use strict";
 
 // Get your own API key from https://uwaterloo.ca/api/register
-var apiKey = "f7f734f0ab7bf935da6074c9786eae64"; // input your uwaterloo api key
+var apiKey = "f7f734f0ab7bf935da6074c9786eae64";
 var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
 
 (function(exports) {
@@ -20,17 +13,11 @@ var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
             this.course_data = [];
         }
 
-        // You can add attributes / functions here to store the data
-
         // Call this function to retrieve data from a UW API endpoint
         loadData(endpointUrl) {
             var that = this;
             $.getJSON(endpointUrl + "?key=" + apiKey,
                 function (data) {
-                    // Do something with the data; probably store it
-                    // in the Model to be later read by the View.
-                    // Use that (instead of this) to refer to the instance 
-                    // of AppModel inside this function.
                     that.course_data = data.data;
                 }
             ).always(function() { // is returned as deffered object
@@ -38,12 +25,6 @@ var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
             });
         }
 
-        getCourseData() {
-            var that = this;
-            console.log(that.course_data);
-            // return this.course_data;
-        }
-		
         filterData() {
             var that = this;
             var course_combo = document.getElementById("course_combo");
@@ -53,12 +34,9 @@ var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
             var course_career_data;
             var course_num_data;
             var course_num_career_data;
-            //console.log(course_num);
-            //console.log(course_career);
 
             if (course_num === 'Any') {
                 if (course_career === 'Any') {
-                    //console.log("haha");
                     that.notify(this.course_data);
                 }
                 else if (course_career === 'Undergraduate') {
@@ -168,9 +146,6 @@ var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
                 }
             }
         }
-
-
-		// Add observer functionality to AppModel objects:
 		
 		// Add an observer to the list
 		addObserver(observer) {
@@ -202,7 +177,6 @@ var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
             if (args == null) {
                 return;
             }
-            //console.log(args);
             // Add code here to update the View
             var courseList = document.getElementById("viewContent");
             document.getElementById("viewContent").innerHTML = ""; // clear viewContent
@@ -287,15 +261,38 @@ var endpointUrl = "https://api.uwaterloo.ca/v2/courses/CS.json";
         };
     }
 
-	/*
-		Function that will be called to start the app.
-		Complete it with any additional initialization.
-	*/
+    function addEnterKeyListener(model) {
+        var input = document.getElementById("headContainer");
+        input.addEventListener("keyup", function(event) {
+            event.preventDefault(); // Cancel the default action, if needed
+            if (event.keyCode === 13) { // Number 13 is the "Enter" key on the keyboard
+                document.getElementById("search_button").click();
+            }
+        });
+        
+    }
+
     exports.startApp = function() {
         var model = new AppModel();
         var view = new AppView(model, "div#viewContent");
         model.loadData(endpointUrl);
         addSearchButtonListener(model);
+        addEnterKeyListener(model);
     }
 
 })(window);
+
+// scroll back to top
+window.onscroll = function() {scrollFunction()};
+function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("backToTopBtn").style.display = "block";
+    } else {
+        document.getElementById("backToTopBtn").style.display = "none";
+    }
+}
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
